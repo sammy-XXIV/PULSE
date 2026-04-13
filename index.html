@@ -389,6 +389,13 @@ function switchTab(name){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('act');});
   document.getElementById('tab-'+name).classList.add('act');
   document.getElementById('page-'+name).classList.add('act');
+  // Auto-load signals if not loaded yet
+  if(name==='signals'){
+    var feed=document.getElementById('sigFeed');
+    if(feed && feed.innerHTML.indexOf('Tap Generate')>-1){
+      runSignals();
+    }
+  }
   // Auto-load portfolio if wallet connected
   if(name==='portfolio' && walletAddr){
     var holdings=document.getElementById('portHoldings');
@@ -730,8 +737,7 @@ function loadPortfolio(){
   var addrs=TOKENS.map(function(t){return t.addr;}).join(',');
   api('/api/v6/wallet/asset/token-balances-by-address',{
     address:walletAddr,
-    chains:CID,
-    tokenAddresses:addrs
+    chains:CID
   }).then(function(d){
     var holdings=[];
     if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets){
@@ -855,7 +861,6 @@ function getQuote(){
     if(!from||!to) return;
     var amtWei=(parseFloat(amt)*Math.pow(10,from.dec)).toFixed(0);
     api('/api/v6/dex/aggregator/quote',{
-      chainId:CID,
       chainIndex:CID,
       fromTokenAddress:from.addr,
       toTokenAddress:to.addr,
@@ -888,7 +893,7 @@ function loadSwapBalance(){
   var tok=null; TOKENS.forEach(function(t){if(t.sym===fs)tok=t;});
   if(!tok) return;
   api('/api/v6/wallet/asset/token-balances-by-address',{
-    address:walletAddr,chains:CID,tokenAddresses:tok.addr
+    address:walletAddr,chains:CID
   }).then(function(d){
     if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets&&d.data[0].tokenAssets.length>0){
       var bal=parseFloat(d.data[0].tokenAssets[0].balance).toFixed(4);
@@ -910,8 +915,8 @@ function doSwap(){
   var btn=document.getElementById('swapBtn');
   btn.disabled=true; btn.textContent='BUILDING TX...';
   api('/api/v6/dex/aggregator/swap',{
-    chainId:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,
-    amount:amtWei,userWalletAddress:walletAddr,slippage:'0.5'
+    chainIndex:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,
+    amount:amtWei,userWalletAddress:walletAddr,slippagePercent:'0.5'
   }).then(function(d){
     if(!d||!d.data||!d.data[0]||!d.data[0].tx) throw new Error('No tx data');
     var tx=d.data[0].tx;
@@ -951,4 +956,3 @@ window.addEventListener('load',function(){
 </script>
 </body>
 </html>
-
