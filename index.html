@@ -331,7 +331,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
             <input class="swap-amt" id="fromAmt" type="number" inputmode="decimal" placeholder="0.00" oninput="getQuote()">
           </div>
           <select class="tok-sel" id="fromTok" onchange="getQuote()">
-            <option>OKB</option><option>USDC</option><option>xETH</option><option>xBTC</option><option>USDG</option><option>DAI</option>
           </select>
         </div>
         <div class="swap-div">&#8597;</div>
@@ -341,7 +340,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
             <input class="swap-amt" id="toAmt" type="number" inputmode="decimal" placeholder="0.00" readonly>
           </div>
           <select class="tok-sel" id="toTok" onchange="getQuote()">
-            <option>USDC</option><option>OKB</option><option>xETH</option><option>xBTC</option><option>USDG</option><option>DAI</option>
           </select>
         </div>
         <div class="swap-info" id="swapInfo">
@@ -735,13 +733,15 @@ function loadPortfolio(){
   document.getElementById('portWallet').style.display='block';
   document.getElementById('portAddr').textContent=walletAddr.slice(0,8)+'...'+walletAddr.slice(-6);
   var addrs=TOKENS.map(function(t){return t.addr;}).join(',');
-  api('/api/v6/wallet/asset/token-balances-by-address',{
+  api('/api/v6/wallet/asset/all-token-balances-by-address',{
     address:walletAddr,
     chains:CID
   }).then(function(d){
     var holdings=[];
-    if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets){
-      holdings=d.data[0].tokenAssets.filter(function(a){return parseFloat(a.balance)>0;});
+    // v6 returns flat array of token objects
+    if(d&&d.data) {
+      var flat=Array.isArray(d.data)?d.data:(d.data[0]&&d.data[0].tokenAssets?d.data[0].tokenAssets:[]);
+      holdings=flat.filter(function(a){return parseFloat(a.balance||a.tokenBalance||0)>0;});
     }
     var totalUSD=0;
     if(holdings.length===0){
@@ -751,19 +751,21 @@ function loadPortfolio(){
       return;
     }
     var html=holdings.map(function(h){
-      var usd=parseFloat(h.balanceUsd||0);
+      var bal=parseFloat(h.balance||h.tokenBalance||0);
+      var usd=parseFloat(h.balanceUsd||h.tokenBalanceUsd||h.usdValue||0);
       totalUSD+=usd;
-      var pct=h.priceChange24h?parseFloat(h.priceChange24h):0;
+      var sym=h.symbol||h.tokenSymbol||'???';
+      var pct=parseFloat(h.priceChange24h||h.change24h||0);
       var cc=pct>0?'up':pct<0?'dn':'neu';
       return '<div class="port-item">'
-        +'<div class="port-left"><div class="tok-icon">'+h.symbol.slice(0,3)+'</div><div><div class="tok-sym">'+h.symbol+'</div><div class="tok-nm">'+parseFloat(h.balance).toFixed(4)+' tokens</div></div></div>'
+        +'<div class="port-left"><div class="tok-icon">'+sym.slice(0,3)+'</div><div><div class="tok-sym">'+sym+'</div><div class="tok-nm">'+bal.toFixed(4)+' tokens</div></div></div>'
         +'<div class="port-right"><div class="port-val">$'+usd.toFixed(2)+'</div><div class="port-sub '+cc+'">'+(pct>0?'+':'')+pct.toFixed(2)+'%</div></div>'
         +'</div>';
     }).join('');
     document.getElementById('portHoldings').innerHTML=html;
     document.getElementById('portBal').textContent='$'+totalUSD.toFixed(2)+' total value';
 
-    var portSummary=holdings.map(function(h){return h.symbol+': $'+parseFloat(h.balanceUsd||0).toFixed(2);}).join(', ');
+    var portSummary=holdings.map(function(h){return (h.symbol||h.tokenSymbol||'?')+': $'+parseFloat(h.balanceUsd||h.tokenBalanceUsd||h.usdValue||0).toFixed(2);}).join(', ');
     var prompt='You are a DeFi portfolio advisor. Analyze this X Layer wallet portfolio:\n\n'+portSummary+'\n\nProvide:\n1. PORTFOLIO HEALTH: Brief assessment\n2. TOP RISK: Biggest concern\n3. OPPORTUNITY: Best action to take now\n4. REBALANCE: Suggested allocation changes\n5. VERDICT: One sentence overall recommendation\n\nBe specific, actionable, professional. No emojis. No markdown.';
     document.getElementById('portAICard').style.display='block';
     return claudeCustom(prompt).then(function(text){
@@ -892,7 +894,7 @@ function loadSwapBalance(){
   var fs=document.getElementById('fromTok').value;
   var tok=null; TOKENS.forEach(function(t){if(t.sym===fs)tok=t;});
   if(!tok) return;
-  api('/api/v6/wallet/asset/token-balances-by-address',{
+  api('/api/v6/wallet/asset/all-token-balances-by-address',{
     address:walletAddr,chains:CID
   }).then(function(d){
     if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets&&d.data[0].tokenAssets.length>0){
@@ -950,9 +952,22 @@ function toast(msg,type){
 
 // Init
 window.addEventListener('load',function(){
+  // Populate swap token selects from TOKENS array
+  var fromSel=document.getElementById('fromTok');
+  var toSel=document.getElementById('toTok');
+  TOKENS.forEach(function(t,i){
+    var o1=document.createElement('option');
+    o1.value=t.sym; o1.textContent=t.sym;
+    fromSel.appendChild(o1);
+    var o2=document.createElement('option');
+    o2.value=t.sym; o2.textContent=t.sym;
+    if(i===1) o2.selected=true; // default To = USDC
+    toSel.appendChild(o2);
+  });
   initWallet();
   runMarket();
 });
 </script>
 </body>
 </html>
+
