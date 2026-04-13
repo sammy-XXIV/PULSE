@@ -512,45 +512,32 @@ function streamTo(elId, text){
 
 // Load market data - real prices, real 24h change, real volume
 function loadTokens(){
-  var addrs = TOKENS.map(function(t){return t.addr;}).join(',');
-  // Try both chainId and chainIndex parameter names
-  var priceReq = api('/api/v6/dex/market/price',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
-  var tickerReq = api('/api/v6/dex/market/tickers',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
-  return Promise.all([priceReq, tickerReq]).then(function(results){
-    var priceData = results[0];
-    var tickerData = results[1];
-    var priceMap={}, changeMap={}, volMap={};
-    if(priceData&&priceData.data) priceData.data.forEach(function(item){
-      priceMap[item.tokenContractAddress.toLowerCase()]=item.price;
-    });
-    if(tickerData&&tickerData.data) tickerData.data.forEach(function(item){
-      var addr=(item.tokenContractAddress||'').toLowerCase();
-      changeMap[addr]=item.priceChange24H||item.change24H||'0';
-      volMap[addr]=item.volume24H||item.volume||'0';
+  var tokens=TOKENS.map(function(t){return{chainIndex:CID,tokenContractAddress:t.addr};});
+  return fetch(W+'?action=prices',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tokens:tokens})
+  }).then(function(r){return r.json();}).then(function(d){
+    var priceMap={},changeMap={},volMap={};
+    if(d&&d.data) d.data.forEach(function(item){
+      var key=(item.tokenContractAddress||'').toLowerCase();
+      priceMap[key]=item.price||item.lastPrice||'0';
+      changeMap[key]=item.priceChange24H||item.change24h||item.change||'0';
+      volMap[key]=item.volume24H||item.volume||'0';
     });
     return TOKENS.map(function(t){
       var key=t.addr.toLowerCase();
-      var price=priceMap[key]||'0';
-      var change=parseFloat(changeMap[key]||'0');
-      var vol=parseFloat(volMap[key]||'0');
-      return Object.assign({},t,{price:price,change:change,vol:vol});
+      return Object.assign({},t,{
+        price:priceMap[key]||'0',
+        change:parseFloat(changeMap[key]||'0'),
+        vol:parseFloat(volMap[key]||'0')
+      });
     });
   }).catch(function(){
-    // Fallback to price only
-    return api('/api/v6/dex/market/price',{chainId:CID,tokenContractAddress:addrs})
-      .then(function(d){
-        var map={};
-        if(d&&d.data) d.data.forEach(function(item){
-          map[item.tokenContractAddress.toLowerCase()]=item.price;
-        });
-        return TOKENS.map(function(t){
-          return Object.assign({},t,{price:map[t.addr.toLowerCase()]||'0',change:0,vol:0});
-        });
-      }).catch(function(){
-        return TOKENS.map(function(t){return Object.assign({},t,{price:'0',change:0,vol:0});});
-      });
+    return TOKENS.map(function(t){return Object.assign({},t,{price:'0',change:0,vol:0});});
   });
 }
+
 
 function renderMarketTable(rows){
   var b=document.getElementById('mktBody');
