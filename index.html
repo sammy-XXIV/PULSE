@@ -443,7 +443,6 @@ function toggleWallet(){
     btn.textContent=walletAddr.slice(0,6)+'...'+walletAddr.slice(-4);
     btn.classList.add('on');
     toast('Wallet connected','ok');
-    loadPortfolio();
     updateSwapWallet();
   }).catch(function(e){ toast(e.message||'Failed','err'); });
 }
@@ -510,8 +509,8 @@ function streamTo(elId, text){
 function loadTokens(){
   var addrs = TOKENS.map(function(t){return t.addr;}).join(',');
   // Try both chainId and chainIndex parameter names
-  var priceReq = api('/api/v5/dex/market/price',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
-  var tickerReq = api('/api/v5/dex/market/tickers',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
+  var priceReq = api('/api/v6/dex/market/price',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
+  var tickerReq = api('/api/v6/dex/market/tickers',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
   return Promise.all([priceReq, tickerReq]).then(function(results){
     var priceData = results[0];
     var tickerData = results[1];
@@ -533,7 +532,7 @@ function loadTokens(){
     });
   }).catch(function(){
     // Fallback to price only
-    return api('/api/v5/dex/market/price',{chainId:CID,tokenContractAddress:addrs})
+    return api('/api/v6/dex/market/price',{chainId:CID,tokenContractAddress:addrs})
       .then(function(d){
         var map={};
         if(d&&d.data) d.data.forEach(function(item){
@@ -675,10 +674,10 @@ function runScanner(){
   toast('Scanning token','info');
 
   var tokenInfo={};
-  api('/api/v5/dex/market/price',{chainId:CID,tokenContractAddress:addr})
+  api('/api/v6/dex/market/price',{chainId:CID,tokenContractAddress:addr})
     .then(function(d){
       if(d&&d.data&&d.data[0]) tokenInfo.price=d.data[0].price;
-      return api('/api/v5/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr});
+      return api('/api/v6/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr});
     })
     .then(function(d){
       if(d&&d.data&&d.data[0]){
@@ -729,7 +728,7 @@ function loadPortfolio(){
   document.getElementById('portWallet').style.display='block';
   document.getElementById('portAddr').textContent=walletAddr.slice(0,8)+'...'+walletAddr.slice(-6);
   var addrs=TOKENS.map(function(t){return t.addr;}).join(',');
-  api('/api/v5/wallet/asset/token-balances-by-address',{
+  api('/api/v6/wallet/asset/token-balances-by-address',{
     address:walletAddr,
     chains:CID,
     tokenAddresses:addrs
@@ -781,7 +780,7 @@ function runLens(){
   toast('Fetching transaction','info');
 
   // Correct params: txHash (capital H) + chainIndex
-  api('/api/v5/wallet/post-transaction/transaction-detail-by-txhash',{
+  api('/api/v6/wallet/post-transaction/transaction-detail-by-txhash',{
     chainIndex:CID,
     txHash:hash
   }).then(function(d){
@@ -855,7 +854,7 @@ function getQuote(){
     TOKENS.forEach(function(t){if(t.sym===fs)from=t;if(t.sym===ts)to=t;});
     if(!from||!to) return;
     var amtWei=(parseFloat(amt)*Math.pow(10,from.dec)).toFixed(0);
-    api('/api/v5/dex/aggregator/quote',{
+    api('/api/v6/dex/aggregator/quote',{
       chainId:CID,
       chainIndex:CID,
       fromTokenAddress:from.addr,
@@ -888,7 +887,7 @@ function loadSwapBalance(){
   var fs=document.getElementById('fromTok').value;
   var tok=null; TOKENS.forEach(function(t){if(t.sym===fs)tok=t;});
   if(!tok) return;
-  api('/api/v5/wallet/asset/token-balances-by-address',{
+  api('/api/v6/wallet/asset/token-balances-by-address',{
     address:walletAddr,chains:CID,tokenAddresses:tok.addr
   }).then(function(d){
     if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets&&d.data[0].tokenAssets.length>0){
@@ -910,7 +909,7 @@ function doSwap(){
   var amtWei=(parseFloat(amt)*Math.pow(10,from.dec)).toFixed(0);
   var btn=document.getElementById('swapBtn');
   btn.disabled=true; btn.textContent='BUILDING TX...';
-  api('/api/v5/dex/aggregator/swap',{
+  api('/api/v6/dex/aggregator/swap',{
     chainId:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,
     amount:amtWei,userWalletAddress:walletAddr,slippage:'0.5'
   }).then(function(d){
@@ -952,3 +951,4 @@ window.addEventListener('load',function(){
 </script>
 </body>
 </html>
+
