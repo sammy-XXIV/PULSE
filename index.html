@@ -396,23 +396,48 @@ function okx(path, params) {
 
 // Load token prices
 function loadTokens() {
-  var promises = TOKENS.map(function(t) {
-    return okx('/api/v5/dex/market/price', {chainId: CHAIN_ID, tokenContractAddress: t.addr})
-      .then(function(d) {
-        var price = (d && d.data && d.data[0]) ? d.data[0].price : '0';
-        var change = parseFloat((Math.random()*10-5).toFixed(2));
-        var vol = Math.floor(Math.random()*900000+50000);
-        return Object.assign({}, t, {price: price, change: change, vol: vol});
-      })
-      .catch(function() {
-        return Object.assign({}, t, {price: 'N/A', change: 0, vol: 0});
+  // Fetch all token prices in one batch call using tickers
+  var addrList = TOKENS.map(function(t) { return t.addr; }).join(',');
+  return okx('/api/v5/dex/market/price', {
+    chainId: CHAIN_ID,
+    tokenContractAddress: addrList
+  }).then(function(d) {
+    var priceMap = {};
+    if (d && d.data) {
+      d.data.forEach(function(item) {
+        priceMap[item.tokenContractAddress.toLowerCase()] = item.price;
       });
-  });
-  return Promise.all(promises).then(function(rows) {
+    }
+    var rows = TOKENS.map(function(t) {
+      var price = priceMap[t.addr.toLowerCase()] || '0';
+      var change = parseFloat((Math.random()*10-5).toFixed(2));
+      var vol = Math.floor(Math.random()*900000+50000);
+      return Object.assign({}, t, {price: price, change: change, vol: vol});
+    });
     mData = rows;
     renderTable(rows);
     updateStats();
     return rows;
+  }).catch(function(e) {
+    // Fallback: try one by one
+    var promises = TOKENS.map(function(t) {
+      return okx('/api/v5/dex/market/price', {chainId: CHAIN_ID, tokenContractAddress: t.addr})
+        .then(function(d) {
+          var price = (d && d.data && d.data[0]) ? d.data[0].price : '0';
+          var change = parseFloat((Math.random()*10-5).toFixed(2));
+          var vol = Math.floor(Math.random()*900000+50000);
+          return Object.assign({}, t, {price: price, change: change, vol: vol});
+        })
+        .catch(function() {
+          return Object.assign({}, t, {price: 'N/A', change: 0, vol: 0});
+        });
+    });
+    return Promise.all(promises).then(function(rows) {
+      mData = rows;
+      renderTable(rows);
+      updateStats();
+      return rows;
+    });
   });
 }
 
@@ -649,7 +674,9 @@ function run() {
   loadTokens().then(function(rows) {
     if (!rows.length) throw new Error('No market data');
     toast('Running AI analysis', 'info');
-    return runClaude(rows);
+    return new Promise(function(resolve) { setTimeout(resolve, 1000); }).then(function() {
+      return runClaude(rows);
+    });
   }).then(function() {
     renderTable(mData);
     updateStats();
@@ -684,4 +711,3 @@ window.addEventListener('load', function() {
 </script>
 </body>
 </html>
-
