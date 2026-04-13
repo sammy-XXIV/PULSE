@@ -331,7 +331,7 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
             <input class="swap-amt" id="fromAmt" type="number" inputmode="decimal" placeholder="0.00" oninput="getQuote()">
           </div>
           <select class="tok-sel" id="fromTok" onchange="getQuote()">
-            <option>WOKB</option><option>USDC</option><option>xETH</option><option>xBTC</option><option>USDG</option><option>DAI</option>
+            <option>OKB</option><option>USDC</option><option>xETH</option><option>xBTC</option><option>USDG</option><option>DAI</option>
           </select>
         </div>
         <div class="swap-div">&#8597;</div>
@@ -341,7 +341,7 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
             <input class="swap-amt" id="toAmt" type="number" inputmode="decimal" placeholder="0.00" readonly>
           </div>
           <select class="tok-sel" id="toTok" onchange="getQuote()">
-            <option>USDC</option><option>WOKB</option><option>xETH</option><option>xBTC</option><option>USDG</option><option>DAI</option>
+            <option>USDC</option><option>OKB</option><option>xETH</option><option>xBTC</option><option>USDG</option><option>DAI</option>
           </select>
         </div>
         <div class="swap-info" id="swapInfo">
@@ -363,7 +363,7 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
 var W = 'https://throbbing-hill-7551.samsonsamuel531.workers.dev';
 var CID = '196';
 var TOKENS = [
-  {sym:'WOKB',  name:'Wrapped OKB',   addr:'0xe538905cf8410324e03A5A23C1c177a474D59b2b', dec:18},
+  {sym:'OKB',   name:'OKB (Native)',   addr:'0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', dec:18},
   {sym:'USDC',  name:'USD Coin',       addr:'0x74b7F16337b8972027F6196A17a631aC6dE26d22', dec:6},
   {sym:'USDG',  name:'Global Dollar',  addr:'0x4ae46a509F6b1D9056937BA4500cb143933D2dc8', dec:6},
   {sym:'DAI',   name:'Dai',            addr:'0xC5015b9d9161Dca7e18e32f6f25C4aD850731Fd4', dec:18},
@@ -389,6 +389,18 @@ function switchTab(name){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('act');});
   document.getElementById('tab-'+name).classList.add('act');
   document.getElementById('page-'+name).classList.add('act');
+  // Auto-load portfolio if wallet connected
+  if(name==='portfolio' && walletAddr){
+    var holdings=document.getElementById('portHoldings');
+    if(holdings && holdings.innerHTML.indexOf('Connect wallet')>-1){
+      loadPortfolio();
+    }
+  }
+  // Auto-load swap balance
+  if(name==='swap' && walletAddr){
+    updateSwapWallet();
+    loadSwapBalance();
+  }
 }
 
 // Wallet
@@ -497,9 +509,9 @@ function streamTo(elId, text){
 // Load market data - real prices, real 24h change, real volume
 function loadTokens(){
   var addrs = TOKENS.map(function(t){return t.addr;}).join(',');
-  // Fetch price and ticker data in parallel
-  var priceReq = api('/api/v5/dex/market/price',{chainId:CID,tokenContractAddress:addrs});
-  var tickerReq = api('/api/v5/dex/market/tickers',{chainId:CID,tokenContractAddress:addrs});
+  // Try both chainId and chainIndex parameter names
+  var priceReq = api('/api/v5/dex/market/price',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
+  var tickerReq = api('/api/v5/dex/market/tickers',{chainId:CID,chainIndex:CID,tokenContractAddress:addrs});
   return Promise.all([priceReq, tickerReq]).then(function(results){
     var priceData = results[0];
     var tickerData = results[1];
@@ -768,35 +780,57 @@ function runLens(){
   document.getElementById('lensResult').innerHTML='';
   toast('Fetching transaction','info');
 
+  // Correct params: txHash (capital H) + chainIndex
   api('/api/v5/wallet/post-transaction/transaction-detail-by-txhash',{
     chainIndex:CID,
-    txhash:hash
+    txHash:hash
   }).then(function(d){
-    var tx=d&&d.data&&d.data[0]?d.data[0]:{};
-    var prompt='You are a blockchain analyst explaining X Layer transactions in plain English.\n\nTransaction data:\nHash: '+hash+'\nFrom: '+(tx.from||'Unknown')+'\nTo: '+(tx.to||'Unknown')+'\nValue: '+(tx.amount||'0')+'\nStatus: '+(tx.txStatus||'Unknown')+'\nToken: '+(tx.tokenSymbol||'Native OKB')+'\nTime: '+(tx.transactionTime||'Unknown')+'\n\nExplain:\n1. WHAT HAPPENED: Plain English description of this transaction\n2. TYPE: What kind of transaction is this (swap, transfer, contract interaction, etc)\n3. PARTIES: Who sent and who received\n4. VALUE: How much was moved and what is it worth\n5. SIGNIFICANCE: Is there anything notable about this transaction\n\nWrite for a beginner. No technical jargon. No emojis. Be concise.';
-    return claudeCustom(prompt).then(function(text){
-      lbar.classList.remove('on');
-      var html='<div class="card">';
-      if(tx.from){
-        html+='<div class="card-hdr"><div class="card-title">Transaction Details</div></div>';
-        html+='<div class="res-card" style="border:none;border-radius:0">';
-        html+='<div class="res-row"><span class="res-key">Hash</span><span class="res-val">'+hash.slice(0,10)+'...'+hash.slice(-8)+'</span></div>';
-        html+='<div class="res-row"><span class="res-key">From</span><span class="res-val">'+tx.from.slice(0,8)+'...'+tx.from.slice(-6)+'</span></div>';
-        html+='<div class="res-row"><span class="res-key">To</span><span class="res-val">'+tx.to.slice(0,8)+'...'+tx.to.slice(-6)+'</span></div>';
-        html+='<div class="res-row"><span class="res-key">Status</span><span class="res-val '+(tx.txStatus==='2'?'up':'dn')+'">'+( tx.txStatus==='2'?'Success':'Failed')+'</span></div>';
-        html+='</div></div>';
-      }
-      html+='<div class="card"><div class="card-hdr"><div class="card-title">AI Explanation</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="lensAI"></div></div>';
-      document.getElementById('lensResult').innerHTML=html;
-      return streamTo('lensAI',text);
-    });
+    var tx=(d&&d.data&&d.data[0])?d.data[0]:null;
+    lbar.classList.remove('on');
+
+    if(!tx){
+      // API returned no data - still explain via Claude with just the hash
+      var fallbackPrompt='You are a blockchain analyst. Analyze this X Layer (OKX Layer 2) transaction hash: '+hash+'\n\nI could not fetch the full transaction details from the API. Based on the hash alone:\n1. HASH INFO: What can you tell from the hash format\n2. HOW TO VERIFY: Exact steps to look this up on X Layer explorer at https://www.okx.com/explorer/xlayer\n3. WHAT TO LOOK FOR: What fields the user should check when they find the transaction\n\nBe direct and helpful. No emojis.';
+      document.getElementById('lensResult').innerHTML='<div class="card"><div class="card-hdr"><div class="card-title">AI Explanation</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="lensAI"></div></div>';
+      return claudeCustom(fallbackPrompt).then(function(text){ return streamTo('lensAI',text); });
+    }
+
+    // Build transaction summary from real data
+    var from='Unknown', to='Unknown', amount='0', symbol='OKB', status='Unknown', time='Unknown';
+    if(tx.fromDetails&&tx.fromDetails.length>0) from=tx.fromDetails[0].address||'Unknown';
+    if(tx.toDetails&&tx.toDetails.length>0) to=tx.toDetails[0].address||'Unknown';
+    if(tx.amount) amount=tx.amount;
+    if(tx.symbol) symbol=tx.symbol;
+    if(tx.txStatus) status=tx.txStatus;
+    if(tx.txTime) time=new Date(parseInt(tx.txTime)).toUTCString();
+
+    // Include internal transfers if any
+    var internals='';
+    if(tx.internalTransactionDetails&&tx.internalTransactionDetails.length>0){
+      internals='\nInternal transfers:\n'+tx.internalTransactionDetails.map(function(t){
+        return '- '+t.amount+' from '+t.from+' to '+t.to;
+      }).join('\n');
+    }
+
+    var prompt='You are a blockchain analyst explaining X Layer transactions in plain English to a non-technical user.\n\nTransaction data:\nHash: '+hash+'\nFrom: '+from+'\nTo: '+to+'\nAmount: '+amount+' '+symbol+'\nStatus: '+status+'\nTime: '+time+internals+'\n\nExplain:\n1. WHAT HAPPENED: One clear sentence describing what occurred\n2. TYPE: What kind of transaction is this (simple transfer, token swap, DeFi interaction, contract call, etc)\n3. PARTIES: Describe sender and receiver addresses briefly\n4. VALUE: How much was transferred\n5. VERDICT: Was this transaction successful? Any notable details?\n\nWrite for a beginner. Clear language. No jargon. No emojis.';
+
+    var statusClass=status==='success'?'up':'dn';
+    var html='<div class="card">'
+      +'<div class="card-hdr"><div class="card-title">Transaction Details</div></div>'
+      +'<div style="padding:0 14px">'
+      +'<div class="res-row"><span class="res-key">Hash</span><span class="res-val">'+hash.slice(0,10)+'...'+hash.slice(-8)+'</span></div>'
+      +'<div class="res-row"><span class="res-key">From</span><span class="res-val">'+from.slice(0,8)+'...'+from.slice(-6)+'</span></div>'
+      +'<div class="res-row"><span class="res-key">To</span><span class="res-val">'+to.slice(0,8)+'...'+to.slice(-6)+'</span></div>'
+      +'<div class="res-row"><span class="res-key">Amount</span><span class="res-val">'+amount+' '+symbol+'</span></div>'
+      +'<div class="res-row"><span class="res-key">Status</span><span class="res-val '+statusClass+'">'+status+'</span></div>'
+      +'<div class="res-row"><span class="res-key">Time</span><span class="res-val">'+time+'</span></div>'
+      +'</div></div>';
+    html+='<div class="card"><div class="card-hdr"><div class="card-title">AI Explanation</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="lensAI"></div></div>';
+    document.getElementById('lensResult').innerHTML=html;
+    return claudeCustom(prompt).then(function(text){ return streamTo('lensAI',text); });
   }).catch(function(e){
     lbar.classList.remove('on');
-    var prompt='Explain this X Layer transaction hash in plain English: '+hash+'. Note that transaction details could not be fetched automatically. Explain what a transaction hash is and how someone can look it up on the X Layer explorer at https://www.okx.com/explorer/xlayer. No emojis.';
-    return claudeCustom(prompt).then(function(text){
-      document.getElementById('lensResult').innerHTML='<div class="card"><div class="card-hdr"><div class="card-title">AI Explanation</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="lensAI"></div></div>';
-      return streamTo('lensAI',text);
-    }).catch(function(){toast(e.message,'err');});
+    toast(e.message,'err');
   });
 }
 
@@ -822,7 +856,11 @@ function getQuote(){
     if(!from||!to) return;
     var amtWei=(parseFloat(amt)*Math.pow(10,from.dec)).toFixed(0);
     api('/api/v5/dex/aggregator/quote',{
-      chainId:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,amount:amtWei
+      chainId:CID,
+      chainIndex:CID,
+      fromTokenAddress:from.addr,
+      toTokenAddress:to.addr,
+      amount:amtWei
     }).then(function(d){
       if(d&&d.data&&d.data[0]){
         var q=d.data[0]; quoteData=q;
@@ -835,8 +873,13 @@ function getQuote(){
         document.getElementById('swapBtn').textContent=walletAddr?'EXECUTE SWAP':'CONNECT TO SWAP';
         quoted=true;
         if(walletAddr) loadSwapBalance();
+      } else {
+        var msg=(d&&d.msg)?d.msg:'No liquidity for this pair';
+        var code=(d&&d.code)?d.code:'';
+        toast('Quote: '+msg+(code?' ('+code+')':''),'err');
+        document.getElementById('toAmt').value='';
       }
-    }).catch(function(){toast('Quote failed','err');});
+    }).catch(function(e){toast('Quote failed: '+e.message,'err');});
   },700);
 }
 
