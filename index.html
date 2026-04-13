@@ -251,7 +251,7 @@ var TOKENS = [
 ];
 
 var mData = [], sigs = [], qTimer = null, quoted = false, quoteData = null;
-var walletAddr = null, okxUI = null;
+var walletAddr = null, walletProvider = null;
 
 // Clock
 setInterval(function() {
@@ -259,31 +259,19 @@ setInterval(function() {
   if (el) el.textContent = new Date().toUTCString().slice(17,25) + ' UTC';
 }, 1000);
 
-// Init OKX Connect via dynamic ESM import
+// Wallet connect via window.ethereum (OKX Wallet browser injection)
+// Works on both mobile (OKX Wallet app browser) and desktop (OKX extension)
 function initWallet() {
-  import('https://cdn.jsdelivr.net/npm/@okxconnect/ui@1.1.1/dist/index.mjs')
-    .then(function(mod) {
-      var UI = mod.OKXUniversalConnectUI;
-      return UI.init({
-        dappMetaData: {
-          icon: 'https://static.okx.com/cdn/assets/imgs/247/58E63FEA47A2B7D7.png',
-          name: 'PULSE'
-        },
-        actionsConfiguration: {
-          returnStrategy: 'none',
-          modals: 'all'
-        },
-        language: 'en_US',
-        uiPreferences: { theme: 'DARK' }
-      });
-    })
-    .then(function(ui) {
-      okxUI = ui;
-      console.log('OKX Connect ready');
-    })
-    .catch(function(e) {
-      console.log('OKX Connect init error:', e);
-    });
+  // Check if OKX Wallet is injected
+  if (window.okxwallet) {
+    walletProvider = window.okxwallet;
+    console.log('OKX Wallet detected');
+  } else if (window.ethereum) {
+    walletProvider = window.ethereum;
+    console.log('Ethereum provider detected');
+  } else {
+    console.log('No wallet provider found');
+  }
 }
 
 // Connect / disconnect wallet
@@ -296,27 +284,60 @@ function toggleWallet() {
 }
 
 function connectWallet() {
-  if (!okxUI) { toast('Wallet not initialized', 'error'); return; }
-  toast('Opening wallet...', 'info');
-  okxUI.openModal({
-    namespaces: {
-      eip155: {
-        chains: ['eip155:196'],
-        defaultChain: '196',
-        rpcMap: { '196': 'https://rpc.xlayer.tech' }
-      }
+  // Re-detect provider on connect attempt
+  if (!walletProvider) {
+    if (window.okxwallet) walletProvider = window.okxwallet;
+    else if (window.ethereum) walletProvider = window.ethereum;
+  }
+
+  if (!walletProvider) {
+    // No wallet detected - show deeplink to OKX Wallet
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      var dappUrl = encodeURIComponent(window.location.href);
+      window.location.href = 'okx://wallet/dapp/url?dappUrl=' + dappUrl;
+      setTimeout(function() {
+        window.open('https://www.okx.com/download', '_blank');
+      }, 2000);
+    } else {
+      window.open('https://www.okx.com/web3/wallet', '_blank');
+      toast('Install OKX Wallet extension', 'info');
     }
-  }).then(function(session) {
-    if (session && session.namespaces && session.namespaces.eip155) {
-      var accounts = session.namespaces.eip155.accounts;
+    return;
+  }
+
+  toast('Connecting wallet...', 'info');
+
+  // Request accounts
+  walletProvider.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
       if (accounts && accounts.length > 0) {
-        walletAddr = accounts[0].split(':')[2];
-        onWalletConnected();
+        walletAddr = accounts[0];
+        // Switch to X Layer (chain 196)
+        return walletProvider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0xC4' }]
+        }).catch(function() {
+          // Chain not added yet, add it
+          return walletProvider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0xC4',
+              chainName: 'X Layer Mainnet',
+              nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
+              rpcUrls: ['https://rpc.xlayer.tech'],
+              blockExplorerUrls: ['https://www.okx.com/explorer/xlayer']
+            }]
+          });
+        });
       }
-    }
-  }).catch(function(e) {
-    toast('Connection cancelled', 'info');
-  });
+    })
+    .then(function() {
+      onWalletConnected();
+    })
+    .catch(function(e) {
+      toast(e.message || 'Connection failed', 'error');
+    });
 }
 
 function onWalletConnected() {
@@ -330,7 +351,6 @@ function onWalletConnected() {
 }
 
 function disconnectWallet() {
-  if (okxUI) okxUI.disconnect();
   walletAddr = null;
   quoteData = null;
   quoted = false;
@@ -507,7 +527,7 @@ function doSwap() {
     var tx = d.data[0].tx;
     btn.textContent = 'CONFIRM IN WALLET';
 
-    return okxUI.request({
+    return walletProvider.request({
       method: 'eth_sendTransaction',
       params: [{
         from: walletAddr,
@@ -516,7 +536,7 @@ function doSwap() {
         value: tx.value || '0x0',
         gas: tx.gas ? '0x' + parseInt(tx.gas).toString(16) : undefined
       }]
-    }, 'eip155:196');
+    });
   }).then(function(txHash) {
     toast('Swap submitted: ' + txHash.slice(0,10) + '...', 'success');
     btn.textContent = 'EXECUTE SWAP';
@@ -656,7 +676,12 @@ function toast(msg, type) {
 // Init on load
 window.addEventListener('load', function() {
   initWallet();
+  // Also detect wallet on user interaction (mobile browsers inject late)
+  document.getElementById('connectBtn').addEventListener('click', function() {
+    initWallet();
+  }, { once: true });
 });
 </script>
 </body>
 </html>
+
