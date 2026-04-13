@@ -494,24 +494,45 @@ function streamTo(elId, text){
   });
 }
 
-// Load market data
+// Load market data - real prices, real 24h change, real volume
 function loadTokens(){
-  return api('/api/v5/dex/market/price',{
-    chainId:CID,
-    tokenContractAddress:TOKENS.map(function(t){return t.addr;}).join(',')
-  }).then(function(d){
-    var map={};
-    if(d&&d.data) d.data.forEach(function(item){
-      map[item.tokenContractAddress.toLowerCase()]=item.price;
+  var addrs = TOKENS.map(function(t){return t.addr;}).join(',');
+  // Fetch price and ticker data in parallel
+  var priceReq = api('/api/v5/dex/market/price',{chainId:CID,tokenContractAddress:addrs});
+  var tickerReq = api('/api/v5/dex/market/tickers',{chainId:CID,tokenContractAddress:addrs});
+  return Promise.all([priceReq, tickerReq]).then(function(results){
+    var priceData = results[0];
+    var tickerData = results[1];
+    var priceMap={}, changeMap={}, volMap={};
+    if(priceData&&priceData.data) priceData.data.forEach(function(item){
+      priceMap[item.tokenContractAddress.toLowerCase()]=item.price;
+    });
+    if(tickerData&&tickerData.data) tickerData.data.forEach(function(item){
+      var addr=(item.tokenContractAddress||'').toLowerCase();
+      changeMap[addr]=item.priceChange24H||item.change24H||'0';
+      volMap[addr]=item.volume24H||item.volume||'0';
     });
     return TOKENS.map(function(t){
-      var price=map[t.addr.toLowerCase()]||'0';
-      var change=parseFloat((Math.random()*10-5).toFixed(2));
-      var vol=Math.floor(Math.random()*900000+50000);
+      var key=t.addr.toLowerCase();
+      var price=priceMap[key]||'0';
+      var change=parseFloat(changeMap[key]||'0');
+      var vol=parseFloat(volMap[key]||'0');
       return Object.assign({},t,{price:price,change:change,vol:vol});
     });
   }).catch(function(){
-    return TOKENS.map(function(t){return Object.assign({},t,{price:'0',change:0,vol:0});});
+    // Fallback to price only
+    return api('/api/v5/dex/market/price',{chainId:CID,tokenContractAddress:addrs})
+      .then(function(d){
+        var map={};
+        if(d&&d.data) d.data.forEach(function(item){
+          map[item.tokenContractAddress.toLowerCase()]=item.price;
+        });
+        return TOKENS.map(function(t){
+          return Object.assign({},t,{price:map[t.addr.toLowerCase()]||'0',change:0,vol:0});
+        });
+      }).catch(function(){
+        return TOKENS.map(function(t){return Object.assign({},t,{price:'0',change:0,vol:0});});
+      });
   });
 }
 
