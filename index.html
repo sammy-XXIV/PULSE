@@ -546,7 +546,14 @@ function renderMarketTable(rows){
     var cs=(t.change>0?'+':'')+t.change+'%';
     var ps=parseFloat(t.price)>0?'$'+parseFloat(t.price).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:6}):'$0.00';
     var sig=null; for(var i=0;i<sigs.length;i++){if(sigs[i].token===t.sym){sig=sigs[i];break;}}
-    var badge=sig?'<span class="badge b-'+sig.type.toLowerCase()+'">'+sig.type+'</span>':'<span class="badge b-pend">--</span>';
+    var autoType='HOLD';
+    if(!sig){
+      if(t.change>2) autoType='BUY';
+      else if(t.change<-2) autoType='SELL';
+      else autoType='HOLD';
+    }
+    var sigType=sig?sig.type:autoType;
+    var badge='<span class="badge b-'+sigType.toLowerCase()+'">'+sigType+'</span>';
     return '<tr onclick="selToken(\''+t.sym+'\')">'
       +'<td style="padding-left:14px"><div class="tok-name"><div class="tok-icon">'+t.sym.slice(0,3)+'</div><div><div class="tok-sym">'+t.sym+'</div><span class="tok-nm">'+t.name+'</span></div></div></td>'
       +'<td class="'+cc+'">'+ps+'</td>'
@@ -777,7 +784,8 @@ function runLens(){
   // Correct params: txHash (capital H) + chainIndex
   api('/api/v6/wallet/post-transaction/transaction-detail-by-txhash',{
     chainIndex:CID,
-    txHash:hash
+    txHash:hash,
+    iType:'0'
   }).then(function(d){
     var tx=(d&&d.data&&d.data[0])?d.data[0]:null;
     lbar.classList.remove('on');
@@ -957,3 +965,4 @@ window.addEventListener('load',function(){
 </script>
 </body>
 </html>
+
