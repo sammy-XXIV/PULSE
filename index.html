@@ -727,7 +727,7 @@ function loadPortfolio(){
   document.getElementById('portWallet').style.display='block';
   document.getElementById('portAddr').textContent=walletAddr.slice(0,8)+'...'+walletAddr.slice(-6);
   var addrs=TOKENS.map(function(t){return t.addr;}).join(',');
-  api('/api/v6/wallet/asset/all-token-balances-by-address',{
+  api('/api/v5/dex/balance/all-token-balances-by-address',{
     address:walletAddr,
     chains:CID
   }).then(function(d){
@@ -889,7 +889,7 @@ function loadSwapBalance(){
   var fs=document.getElementById('fromTok').value;
   var tok=null; TOKENS.forEach(function(t){if(t.sym===fs)tok=t;});
   if(!tok) return;
-  api('/api/v6/wallet/asset/all-token-balances-by-address',{
+  api('/api/v5/dex/balance/all-token-balances-by-address',{
     address:walletAddr,chains:CID
   }).then(function(d){
     if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets&&d.data[0].tokenAssets.length>0){
