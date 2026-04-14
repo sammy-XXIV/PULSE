@@ -782,7 +782,7 @@ function runLens(){
   toast('Fetching transaction','info');
 
   // Correct params: txHash (capital H) + chainIndex
-  api('/api/v6/wallet/post-transaction/transaction-detail-by-txhash',{
+  api('/api/v5/wallet/post-transaction/transaction-detail-by-txhash',{
     chainIndex:CID,
     txHash:hash,
     iType:'0'
@@ -965,4 +965,3 @@ window.addEventListener('load',function(){
 </script>
 </body>
 </html>
-
