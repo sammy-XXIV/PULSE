@@ -547,43 +547,52 @@ function runScanner(){
   toast('Scanning token','info');
 
   var tokenInfo={};
-  api('/api/v6/dex/market/price-info',{chainId:CID,tokenContractAddress:addr})
-    .then(function(d){
-      if(d&&d.data&&d.data[0]) tokenInfo.price=d.data[0].price;
-      return api('/api/v5/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr});
-    })
+  api('/api/v5/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr})
     .then(function(d){
       if(d&&d.data&&d.data[0]){
-        tokenInfo.name=d.data[0].name||d.data[0].tokenName||'Unknown';
-        tokenInfo.symbol=d.data[0].symbol||d.data[0].tokenSymbol||'Unknown';
-        tokenInfo.decimals=d.data[0].decimals||18;
-        tokenInfo.totalSupply=d.data[0].totalSupply||'Unknown';
+        var t=d.data[0];
+        tokenInfo.name=t.name||t.tokenName||'Unknown';
+        tokenInfo.symbol=t.symbol||t.tokenSymbol||'Unknown';
+        tokenInfo.decimals=t.decimals||18;
+        tokenInfo.totalSupply=t.totalSupply||'Unknown';
+        tokenInfo.maxSupply=t.maxSupply||'Unknown';
+        tokenInfo.marketCap=t.marketCap||'0';
+        tokenInfo.volume24h=t.volume24h||'0';
       }
-      var prompt='You are a DeFi security expert analyzing tokens on X Layer (OKX Layer 2 blockchain).\n\nAnalyze this token:\nAddress: '+addr+'\nName: '+(tokenInfo.name||'Unknown')+'\nSymbol: '+(tokenInfo.symbol||'Unknown')+'\nPrice: $'+(tokenInfo.price||'0')+'\nTotal Supply: '+(tokenInfo.totalSupply||'Unknown')+'\n\nProvide:\n1. RISK SCORE: X/100 (higher = riskier)\n2. VERDICT: SAFE / CAUTION / DANGER\n3. RED FLAGS: List any concerns\n4. POSITIVES: Any good signs\n5. RECOMMENDATION: One sentence action\n\nFormat verdict line as: VERDICT: SAFE/CAUTION/DANGER\nBe direct, professional. No emojis.';
-      return claudeCustom(prompt);
+      return fetch(W+'?action=prices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokens:[{chainIndex:CID,tokenContractAddress:addr}]})}).then(function(r){return r.json();});
     })
-    .then(function(text){
-      lbar.classList.remove('on');
-      var verdict='CAUTION';
-      if(text.indexOf('VERDICT: SAFE')>-1) verdict='SAFE';
-      if(text.indexOf('VERDICT: DANGER')>-1) verdict='DANGER';
-      var scoreMatch=text.match(/RISK SCORE[:\s]+(\d+)/i);
-      var score=scoreMatch?parseInt(scoreMatch[1]):50;
-      var ringClass=verdict==='SAFE'?'':verdict==='DANGER'?'danger':'warn';
-      var scoreColor=verdict==='SAFE'?'var(--g)':verdict==='DANGER'?'var(--r)':'var(--y)';
-      var html='<div class="res-card">'
-        +'<div class="score-ring '+ringClass+'" style="border-color:'+scoreColor+'">'
-        +'<div class="score-num" style="color:'+scoreColor+'">'+score+'</div>'
-        +'<div class="score-lbl">RISK</div></div>'
-        +'<div style="text-align:center;margin-bottom:12px"><span class="badge b-'+(verdict==='SAFE'?'buy':verdict==='DANGER'?'sell':'hold')+'">'+verdict+'</span></div>';
-      if(tokenInfo.name){
-        html+='<div class="res-row"><span class="res-key">Token</span><span class="res-val">'+tokenInfo.name+' ('+tokenInfo.symbol+')</span></div>';
-        html+='<div class="res-row"><span class="res-key">Price</span><span class="res-val">$'+(tokenInfo.price||'0')+'</span></div>';
-      }
-      html+='<div class="res-row"><span class="res-key">Address</span><span class="res-val">'+addr.slice(0,8)+'...'+addr.slice(-6)+'</span></div></div>';
-      html+='<div class="card"><div class="card-hdr"><div class="card-title">AI Analysis</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="scanAI"></div></div>';
-      document.getElementById('scanResult').innerHTML=html;
-      return streamTo('scanAI',text);
+    .then(function(d){
+      if(d&&d.data&&d.data[0]) tokenInfo.price=d.data[0].price||d.data[0].lastPrice||'0';
+      var priceFmt=parseFloat(tokenInfo.price)>0?'$'+parseFloat(tokenInfo.price).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:8}):'$0';
+      var mcapFmt=parseFloat(tokenInfo.marketCap)>0?'$'+parseFloat(tokenInfo.marketCap).toLocaleString('en',{maximumFractionDigits:0}):'Unknown';
+      var volFmt=parseFloat(tokenInfo.volume24h)>0?'$'+parseFloat(tokenInfo.volume24h).toLocaleString('en',{maximumFractionDigits:0}):'Unknown';
+      var prompt='You are a DeFi security expert analyzing tokens on X Layer (OKX Layer 2 blockchain).\n\nAnalyze this token:\nAddress: '+addr+'\nName: '+(tokenInfo.name||'Unknown')+'\nSymbol: '+(tokenInfo.symbol||'Unknown')+'\nPrice: '+priceFmt+'\nMarket Cap: '+mcapFmt+'\nTotal Supply: '+(tokenInfo.totalSupply||'Unknown')+'\nMax Supply: '+(tokenInfo.maxSupply||'Unknown')+'\n24h Volume: '+volFmt+'\n\nProvide:\n1. RISK SCORE: X/100 (higher = riskier)\n2. VERDICT: SAFE / CAUTION / DANGER\n3. RED FLAGS: List any concerns\n4. POSITIVES: Any good signs\n5. RECOMMENDATION: One sentence action\n\nFormat verdict line as: VERDICT: SAFE/CAUTION/DANGER\nBe direct, professional. No emojis.';
+      return claudeCustom(prompt).then(function(text){
+        lbar.classList.remove('on');
+        var verdict='CAUTION';
+        if(text.indexOf('VERDICT: SAFE')>-1) verdict='SAFE';
+        if(text.indexOf('VERDICT: DANGER')>-1) verdict='DANGER';
+        var scoreMatch=text.match(/RISK SCORE[:\s]+(\d+)/i);
+        var score=scoreMatch?parseInt(scoreMatch[1]):50;
+        var ringClass=verdict==='SAFE'?'':verdict==='DANGER'?'danger':'warn';
+        var scoreColor=verdict==='SAFE'?'var(--g)':verdict==='DANGER'?'var(--r)':'var(--y)';
+        var html='<div class="res-card">'
+          +'<div class="score-ring '+ringClass+'" style="border-color:'+scoreColor+'">'
+          +'<div class="score-num" style="color:'+scoreColor+'">'+score+'</div>'
+          +'<div class="score-lbl">RISK</div></div>'
+          +'<div style="text-align:center;margin-bottom:12px"><span class="badge b-'+(verdict==='SAFE'?'buy':verdict==='DANGER'?'sell':'hold')+'">'+verdict+'</span></div>'
+          +'<div class="res-row"><span class="res-key">Token</span><span class="res-val">'+(tokenInfo.name||'Unknown')+' ('+(tokenInfo.symbol||'?')+')</span></div>'
+          +'<div class="res-row"><span class="res-key">Price</span><span class="res-val">'+priceFmt+'</span></div>'
+          +'<div class="res-row"><span class="res-key">Market Cap</span><span class="res-val">'+mcapFmt+'</span></div>'
+          +'<div class="res-row"><span class="res-key">24h Volume</span><span class="res-val">'+volFmt+'</span></div>'
+          +'<div class="res-row"><span class="res-key">Total Supply</span><span class="res-val">'+(tokenInfo.totalSupply||'Unknown')+'</span></div>'
+          +'<div class="res-row"><span class="res-key">Max Supply</span><span class="res-val">'+(tokenInfo.maxSupply||'Unknown')+'</span></div>'
+          +'<div class="res-row"><span class="res-key">Address</span><span class="res-val">'+addr.slice(0,8)+'...'+addr.slice(-6)+'</span></div>'
+          +'</div>';
+        html+='<div class="card"><div class="card-hdr"><div class="card-title">AI Analysis</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="scanAI"></div></div>';
+        document.getElementById('scanResult').innerHTML=html;
+        return streamTo('scanAI',text);
+      });
     })
     .catch(function(e){ lbar.classList.remove('on'); toast(e.message,'err'); });
 }
