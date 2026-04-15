@@ -21,8 +21,6 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{-webkit-text-size-adjust:100%;height:100%;}
 body{background:var(--bg);color:var(--t);font-family:var(--ui);height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;}
-
-/* HEADER */
 .hdr{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;padding:0 16px;padding-top:env(safe-area-inset-top);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b);}
 .hdr-logo{display:flex;align-items:center;gap:8px;}
 .hdr-mark{width:24px;height:24px;background:var(--g);display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;flex-shrink:0;}
@@ -36,35 +34,25 @@ body{background:var(--bg);color:var(--t);font-family:var(--ui);height:100%;overf
 .conn-btn{background:transparent;border:1px solid var(--b3);color:var(--t2);padding:6px 12px;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:all 0.15s;border-radius:4px;touch-action:manipulation;white-space:nowrap;}
 .conn-btn:active{background:var(--s2);}
 .conn-btn.on{border-color:var(--gb);color:var(--g);}
-
-/* TABS */
 .tabs{position:fixed;bottom:0;left:0;right:0;z-index:100;height:var(--tab);padding-bottom:env(safe-area-inset-bottom);background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--b);display:flex;align-items:stretch;}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;touch-action:manipulation;transition:color 0.15s;color:var(--t4);padding-bottom:2px;}
 .tab.act{color:var(--g);}
 .tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
 .tab span{font-family:var(--mono);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;}
-
-/* PAGES */
 .pages{position:fixed;top:52px;left:0;right:0;bottom:var(--tab);overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .page{display:none;min-height:100%;padding:14px 14px 20px;}
 .page.act{display:block;}
-
-/* CARDS */
 .card{background:var(--s1);border:1px solid var(--b);border-radius:10px;overflow:hidden;margin-bottom:10px;}
 .card-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--b);background:var(--s2);}
 .card-title{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--t3);text-transform:uppercase;}
 .card-tag{font-family:var(--mono);font-size:9px;color:var(--g);background:var(--gd);border:1px solid var(--gb);padding:2px 7px;border-radius:3px;letter-spacing:0.06em;}
 .card-btn{font-family:var(--mono);font-size:9px;color:var(--g);background:none;border:none;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;touch-action:manipulation;}
-
-/* STATS ROW */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);border-radius:10px;overflow:hidden;margin-bottom:10px;}
 .stat{background:var(--s1);padding:12px 10px;}
 .stat-lbl{font-family:var(--mono);font-size:8px;color:var(--t4);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
 .stat-val{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1;}
 .stat-sub{font-family:var(--mono);font-size:9px;margin-top:4px;color:var(--t3);}
 .up{color:var(--g);}.dn{color:var(--r);}.neu{color:var(--t3);}
-
-/* TABLE */
 table{width:100%;border-collapse:collapse;}
 th{font-family:var(--mono);font-size:8px;color:var(--t4);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:8px 14px;border-bottom:1px solid var(--b);font-weight:400;background:var(--s2);white-space:nowrap;}
 th:last-child,td:last-child{text-align:right;}
@@ -81,15 +69,11 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
 .b-sell{background:rgba(244,94,113,0.1);color:var(--r);border:1px solid rgba(244,94,113,0.25);}
 .b-hold{background:var(--s3);color:var(--t3);border:1px solid var(--b);}
 .b-pend{background:var(--s3);color:var(--t4);border:1px solid var(--b);}
-
-/* AI OUTPUT */
 .ai-box{padding:14px;background:var(--bg);min-height:100px;}
 .ai-lbl{display:inline-block;font-family:var(--mono);font-size:8px;color:var(--g);border:1px solid var(--gb);padding:2px 7px;margin-bottom:10px;letter-spacing:0.1em;background:var(--gd);border-radius:3px;}
 .ai-txt{font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--t2);}
 .cur{display:inline-block;width:6px;height:11px;background:var(--g);vertical-align:middle;margin-left:2px;animation:blink 1s infinite;border-radius:1px;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* INPUT */
 .inp-wrap{padding:14px;display:flex;flex-direction:column;gap:10px;}
 .inp-row{display:flex;gap:8px;}
 .inp{background:var(--s2);border:1px solid var(--b2);color:var(--t);font-family:var(--mono);font-size:12px;padding:11px 13px;outline:none;border-radius:6px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;}
@@ -98,8 +82,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
 .inp-btn{background:var(--g);color:#000;border:none;padding:11px 18px;font-family:var(--ui);font-weight:800;font-size:11px;letter-spacing:0.1em;cursor:pointer;text-transform:uppercase;border-radius:6px;touch-action:manipulation;white-space:nowrap;transition:opacity 0.15s;}
 .inp-btn:active{opacity:0.8;}
 .inp-btn:disabled{background:var(--s3);color:var(--t4);cursor:not-allowed;}
-
-/* SWAP */
 .swap-field{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:12px 13px;display:flex;align-items:center;gap:10px;transition:border-color 0.15s;}
 .swap-field:focus-within{border-color:var(--gb);}
 .swap-fi{flex:1;display:flex;flex-direction:column;gap:2px;}
@@ -114,8 +96,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
 .swap-btn{background:var(--g);border:none;color:#000;padding:14px;font-family:var(--ui);font-weight:800;font-size:12px;letter-spacing:0.12em;cursor:pointer;text-transform:uppercase;border-radius:8px;touch-action:manipulation;width:100%;transition:opacity 0.15s;}
 .swap-btn:active{opacity:0.8;}
 .swap-btn:disabled{background:var(--s3);color:var(--t4);cursor:not-allowed;}
-
-/* SIGNAL ITEMS */
 .sig-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--b);transition:background 0.1s;}
 .sig-item:last-child{border-bottom:none;}
 .sig-item:active,.sig-item:hover{background:var(--s2);}
@@ -126,55 +106,35 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
 .sig-tok{font-family:var(--mono);font-size:11px;font-weight:700;}
 .sig-desc{font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sig-time{font-family:var(--mono);font-size:9px;color:var(--t4);margin-top:3px;}
-
-/* PORTFOLIO */
 .port-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--b);}
 .port-item:last-child{border-bottom:none;}
 .port-left{display:flex;align-items:center;gap:10px;}
 .port-right{text-align:right;}
 .port-val{font-family:var(--mono);font-size:12px;font-weight:700;}
 .port-sub{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:2px;}
-
-/* LOADING */
 .lbar{height:2px;background:var(--s2);overflow:hidden;display:none;margin-bottom:10px;border-radius:1px;}
 .lbar.on{display:block;}
 .lbar-fill{height:100%;background:var(--g);width:30%;animation:lslide 1s ease-in-out infinite;border-radius:1px;}
 @keyframes lslide{0%{transform:translateX(-200%)}100%{transform:translateX(450%)}}
-
-/* EMPTY */
 .empty{padding:30px 14px;font-family:var(--mono);font-size:10px;color:var(--t4);text-align:center;letter-spacing:0.06em;line-height:1.8;}
-
-/* SECTION LABEL */
-.sec-lbl{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:0.14em;text-transform:uppercase;padding:14px 0 8px;}
-
-/* RESULT CARD */
 .res-card{background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;}
 .res-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b);}
 .res-row:last-child{border-bottom:none;}
 .res-key{font-family:var(--mono);font-size:10px;color:var(--t3);}
 .res-val{font-family:var(--mono);font-size:10px;color:var(--t);text-align:right;max-width:60%;}
-
-/* SCORE */
 .score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;margin:0 auto 14px;border:3px solid var(--g);}
 .score-ring.warn{border-color:var(--y);}
 .score-ring.danger{border-color:var(--r);}
 .score-num{font-family:var(--mono);font-size:22px;font-weight:700;}
 .score-lbl{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:0.1em;}
-
-/* TOAST */
 .toast{position:fixed;bottom:calc(var(--tab) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--s2);border:1px solid var(--b3);padding:10px 18px;font-family:var(--mono);font-size:11px;color:var(--t);z-index:999;opacity:0;transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1);max-width:calc(100vw - 32px);text-align:center;border-radius:8px;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.err{border-color:var(--r);color:var(--r);}
 .toast.ok{border-color:var(--g);color:var(--g);}
-
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:2px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--s4);border-radius:1px;}
-
-/* WALLET INFO STRIP */
 .wallet-strip{background:var(--s1);border:1px solid var(--gb);border-radius:8px;padding:10px 14px;margin-bottom:10px;display:none;}
 .wallet-addr{font-family:var(--mono);font-size:10px;color:var(--g);}
 .wallet-bal{font-family:var(--mono);font-size:11px;color:var(--t2);margin-top:3px;}
-
 @media(min-width:600px){
   .pages{max-width:480px;margin:0 auto;}
   .hdr,.tabs{max-width:480px;left:50%;transform:translateX(-50%);}
@@ -195,7 +155,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
   </div>
 </div>
 
-<!-- BOTTOM TABS -->
 <div class="tabs">
   <div class="tab act" id="tab-market" onclick="switchTab('market')">
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -225,7 +184,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
 
 <div class="pages">
 
-  <!-- MARKET -->
   <div class="page act" id="page-market">
     <div class="lbar" id="mktLbar"><div class="lbar-fill"></div></div>
     <div class="stats">
@@ -241,10 +199,7 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
       </div>
       <table>
         <thead><tr>
-          <th style="padding-left:14px">Asset</th>
-          <th>Price</th>
-          <th>24h</th>
-          <th>Signal</th>
+          <th style="padding-left:14px">Asset</th><th>Price</th><th>24h</th><th>Signal</th>
         </tr></thead>
         <tbody id="mktBody"><tr><td colspan="4"><div class="empty">Tap Refresh to load market data</div></td></tr></tbody>
       </table>
@@ -255,7 +210,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
     </div>
   </div>
 
-  <!-- SIGNALS -->
   <div class="page" id="page-signals">
     <div class="lbar" id="sigLbar"><div class="lbar-fill"></div></div>
     <div class="card">
@@ -271,7 +225,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
     </div>
   </div>
 
-  <!-- SCANNER -->
   <div class="page" id="page-scanner">
     <div class="lbar" id="scanLbar"><div class="lbar-fill"></div></div>
     <div class="card">
@@ -286,7 +239,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
     <div id="scanResult"></div>
   </div>
 
-  <!-- PORTFOLIO -->
   <div class="page" id="page-portfolio">
     <div class="lbar" id="portLbar"><div class="lbar-fill"></div></div>
     <div class="wallet-strip" id="portWallet">
@@ -303,7 +255,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
     </div>
   </div>
 
-  <!-- LENS -->
   <div class="page" id="page-lens">
     <div class="lbar" id="lensLbar"><div class="lbar-fill"></div></div>
     <div class="card">
@@ -316,7 +267,6 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
     <div id="lensResult"></div>
   </div>
 
-  <!-- SWAP -->
   <div class="page" id="page-swap">
     <div class="wallet-strip" id="swapWallet">
       <div class="wallet-addr" id="swapAddr"></div>
@@ -330,8 +280,7 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
             <div class="swap-lbl">From</div>
             <input class="swap-amt" id="fromAmt" type="number" inputmode="decimal" placeholder="0.00" oninput="getQuote()">
           </div>
-          <select class="tok-sel" id="fromTok" onchange="getQuote()">
-          </select>
+          <select class="tok-sel" id="fromTok" onchange="getQuote()"></select>
         </div>
         <div class="swap-div">&#8597;</div>
         <div class="swap-field">
@@ -339,8 +288,7 @@ tbody tr:active td,tbody tr:hover td{background:var(--s2);}
             <div class="swap-lbl">To</div>
             <input class="swap-amt" id="toAmt" type="number" inputmode="decimal" placeholder="0.00" readonly>
           </div>
-          <select class="tok-sel" id="toTok" onchange="getQuote()">
-          </select>
+          <select class="tok-sel" id="toTok" onchange="getQuote()"></select>
         </div>
         <div class="swap-info" id="swapInfo">
           <div class="sw-row"><span>Rate</span><b id="swRate">--</b></div>
@@ -375,40 +323,27 @@ var TOKENS = [
 
 var mData=[], sigs=[], walletAddr=null, walletProv=null, qTimer=null, quoted=false, quoteData=null;
 
-// Clock
 setInterval(function(){
   var el=document.getElementById('clk');
   if(el) el.textContent=new Date().toUTCString().slice(17,25)+' UTC';
 },1000);
 
-// Tab switching
 function switchTab(name){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('act');});
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('act');});
   document.getElementById('tab-'+name).classList.add('act');
   document.getElementById('page-'+name).classList.add('act');
-  // Auto-load signals if not loaded yet
   if(name==='signals'){
     var feed=document.getElementById('sigFeed');
-    if(feed && feed.innerHTML.indexOf('Tap Generate')>-1){
-      runSignals();
-    }
+    if(feed && feed.innerHTML.indexOf('Tap Generate')>-1) runSignals();
   }
-  // Auto-load portfolio if wallet connected
   if(name==='portfolio' && walletAddr){
     var holdings=document.getElementById('portHoldings');
-    if(holdings && holdings.innerHTML.indexOf('Connect wallet')>-1){
-      loadPortfolio();
-    }
+    if(holdings && holdings.innerHTML.indexOf('Connect wallet')>-1) loadPortfolio();
   }
-  // Auto-load swap balance
-  if(name==='swap' && walletAddr){
-    updateSwapWallet();
-    loadSwapBalance();
-  }
+  if(name==='swap' && walletAddr){ updateSwapWallet(); loadSwapBalance(); }
 }
 
-// Wallet
 function initWallet(){
   if(window.okxwallet) walletProv=window.okxwallet;
   else if(window.ethereum) walletProv=window.ethereum;
@@ -433,14 +368,8 @@ function toggleWallet(){
   walletProv.request({method:'eth_requestAccounts'}).then(function(acc){
     if(acc&&acc.length>0){
       walletAddr=acc[0];
-      return walletProv.request({
-        method:'wallet_switchEthereumChain',
-        params:[{chainId:'0xC4'}]
-      }).catch(function(){
-        return walletProv.request({
-          method:'wallet_addEthereumChain',
-          params:[{chainId:'0xC4',chainName:'X Layer Mainnet',nativeCurrency:{name:'OKB',symbol:'OKB',decimals:18},rpcUrls:['https://rpc.xlayer.tech'],blockExplorerUrls:['https://www.okx.com/explorer/xlayer']}]
-        });
+      return walletProv.request({method:'wallet_switchEthereumChain',params:[{chainId:'0xC4'}]}).catch(function(){
+        return walletProv.request({method:'wallet_addEthereumChain',params:[{chainId:'0xC4',chainName:'X Layer Mainnet',nativeCurrency:{name:'OKB',symbol:'OKB',decimals:18},rpcUrls:['https://rpc.xlayer.tech'],blockExplorerUrls:['https://www.okx.com/explorer/xlayer']}]});
       });
     }
   }).then(function(){
@@ -469,31 +398,19 @@ function updateSwapWallet(){
   document.getElementById('swapAddr').textContent=walletAddr.slice(0,8)+'...'+walletAddr.slice(-6);
 }
 
-// API call via worker
 function api(path, params){
   var url=W+'?path='+encodeURIComponent(path)+'&params='+encodeURIComponent(JSON.stringify(params||{}));
   return fetch(url).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
 }
 
-// Claude via worker
 function claude(marketData){
-  return fetch(W+'?action=claude',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({marketData:marketData})
-  }).then(function(r){return r.json();}).then(function(d){return d.analysis||'';});
+  return fetch(W+'?action=claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({marketData:marketData})}).then(function(r){return r.json();}).then(function(d){return d.analysis||'';});
 }
 
-// Claude custom prompt via worker
 function claudeCustom(prompt){
-  return fetch(W+'?action=custom',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt:prompt})
-  }).then(function(r){return r.json();}).then(function(d){return d.analysis||'';});
+  return fetch(W+'?action=custom',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})}).then(function(r){return r.json();}).then(function(d){return d.analysis||'';});
 }
 
-// Stream text
 function streamTo(elId, text){
   return new Promise(function(resolve){
     var el=document.getElementById(elId);
@@ -510,14 +427,9 @@ function streamTo(elId, text){
   });
 }
 
-// Load market data - real prices, real 24h change, real volume
 function loadTokens(){
   var tokens=TOKENS.map(function(t){return{chainIndex:CID,tokenContractAddress:t.addr};});
-  return fetch(W+'?action=prices',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({tokens:tokens})
-  }).then(function(r){return r.json();}).then(function(d){
+  return fetch(W+'?action=prices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokens:tokens})}).then(function(r){return r.json();}).then(function(d){
     var priceMap={},changeMap={},volMap={};
     if(d&&d.data) d.data.forEach(function(item){
       var key=(item.tokenContractAddress||'').toLowerCase();
@@ -527,17 +439,12 @@ function loadTokens(){
     });
     return TOKENS.map(function(t){
       var key=t.addr.toLowerCase();
-      return Object.assign({},t,{
-        price:priceMap[key]||'0',
-        change:parseFloat(changeMap[key]||'0'),
-        vol:parseFloat(volMap[key]||'0')
-      });
+      return Object.assign({},t,{price:priceMap[key]||'0',change:parseFloat(changeMap[key]||'0'),vol:parseFloat(volMap[key]||'0')});
     });
   }).catch(function(){
     return TOKENS.map(function(t){return Object.assign({},t,{price:'0',change:0,vol:0});});
   });
 }
-
 
 function renderMarketTable(rows){
   var b=document.getElementById('mktBody');
@@ -546,20 +453,12 @@ function renderMarketTable(rows){
     var cs=(t.change>0?'+':'')+t.change+'%';
     var ps=parseFloat(t.price)>0?'$'+parseFloat(t.price).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:6}):'$0.00';
     var sig=null; for(var i=0;i<sigs.length;i++){if(sigs[i].token===t.sym){sig=sigs[i];break;}}
-    var autoType='HOLD';
-    if(!sig){
-      if(t.change>2) autoType='BUY';
-      else if(t.change<-2) autoType='SELL';
-      else autoType='HOLD';
-    }
+    var autoType=t.change>2?'BUY':t.change<-2?'SELL':'HOLD';
     var sigType=sig?sig.type:autoType;
     var badge='<span class="badge b-'+sigType.toLowerCase()+'">'+sigType+'</span>';
     return '<tr onclick="selToken(\''+t.sym+'\')">'
       +'<td style="padding-left:14px"><div class="tok-name"><div class="tok-icon">'+t.sym.slice(0,3)+'</div><div><div class="tok-sym">'+t.sym+'</div><span class="tok-nm">'+t.name+'</span></div></div></td>'
-      +'<td class="'+cc+'">'+ps+'</td>'
-      +'<td class="'+cc+'">'+cs+'</td>'
-      +'<td>'+badge+'</td>'
-      +'</tr>';
+      +'<td class="'+cc+'">'+ps+'</td><td class="'+cc+'">'+cs+'</td><td>'+badge+'</td></tr>';
   }).join('');
 }
 
@@ -581,19 +480,16 @@ function parseSignals(text){
       var p=line.replace('SIGNAL:','').split('|');
       if(p.length>=2){
         var type=p[1].trim().toUpperCase();
-        if(type==='BUY'||type==='SELL'||type==='HOLD'){
+        if(type==='BUY'||type==='SELL'||type==='HOLD')
           sigs.push({token:p[0].trim().toUpperCase(),type:type,reason:p[2]?p[2].trim():'',time:now});
-        }
       }
     }
   });
   if(!sigs.length&&mData.length){
-    var now2=new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
     mData.forEach(function(t){
-      var tp='HOLD',tr='Neutral momentum';
-      if(t.change>2){tp='BUY';tr='Positive momentum';}
-      if(t.change<-2){tp='SELL';tr='Bearish pressure';}
-      sigs.push({token:t.sym,type:tp,reason:tr,time:now2});
+      var tp=t.change>2?'BUY':t.change<-2?'SELL':'HOLD';
+      var tr=tp==='BUY'?'Positive momentum':tp==='SELL'?'Bearish pressure':'Neutral momentum';
+      sigs.push({token:t.sym,type:tp,reason:tr,time:now});
     });
   }
 }
@@ -602,45 +498,30 @@ function renderSignalFeed(){
   var el=document.getElementById('sigFeed');
   if(!sigs.length){el.innerHTML='<div class="empty">No signals yet</div>';return;}
   el.innerHTML=sigs.map(function(s){
-    return '<div class="sig-item">'
-      +'<div class="sig-bar '+s.type.toLowerCase()+'"></div>'
-      +'<div class="sig-c">'
-      +'<div class="sig-top"><div class="sig-tok">'+s.token+'</div><span class="badge b-'+s.type.toLowerCase()+'">'+s.type+'</span></div>'
-      +'<div class="sig-desc">'+s.reason+'</div>'
-      +'<div class="sig-time">'+s.time+'</div>'
-      +'</div></div>';
+    return '<div class="sig-item"><div class="sig-bar '+s.type.toLowerCase()+'"></div>'
+      +'<div class="sig-c"><div class="sig-top"><div class="sig-tok">'+s.token+'</div><span class="badge b-'+s.type.toLowerCase()+'">'+s.type+'</span></div>'
+      +'<div class="sig-desc">'+s.reason+'</div><div class="sig-time">'+s.time+'</div></div></div>';
   }).join('');
 }
 
-// MARKET tab
 function runMarket(){
   var lbar=document.getElementById('mktLbar');
   lbar.classList.add('on');
   document.getElementById('mktAI').innerHTML='<div class="ai-txt" style="color:var(--t4)"><span class="cur"></span></div>';
   toast('Fetching market data','info');
   loadTokens().then(function(rows){
-    mData=rows;
-    renderMarketTable(rows);
-    updateStats();
+    mData=rows; renderMarketTable(rows); updateStats();
     toast('Running AI analysis','info');
     return new Promise(function(res){setTimeout(res,800);}).then(function(){
       return claude(rows.map(function(t){return {symbol:t.sym,price:t.price,change:t.change,vol:t.vol};}));
     });
   }).then(function(text){
-    parseSignals(text);
-    renderMarketTable(mData);
-    updateStats();
+    parseSignals(text); renderMarketTable(mData); updateStats();
     return streamTo('mktAI',text);
-  }).then(function(){
-    lbar.classList.remove('on');
-    toast('Done','ok');
-  }).catch(function(e){
-    lbar.classList.remove('on');
-    toast(e.message,'err');
-  });
+  }).then(function(){ lbar.classList.remove('on'); toast('Done','ok'); })
+  .catch(function(e){ lbar.classList.remove('on'); toast(e.message,'err'); });
 }
 
-// SIGNALS tab
 function runSignals(){
   var lbar=document.getElementById('sigLbar');
   lbar.classList.add('on');
@@ -650,20 +531,13 @@ function runSignals(){
     toast('Generating signals','info');
     return claude(rows.map(function(t){return {symbol:t.sym,price:t.price,change:t.change,vol:t.vol};}));
   }).then(function(text){
-    parseSignals(text);
-    renderSignalFeed();
-    updateStats();
+    parseSignals(text); renderSignalFeed(); updateStats();
     return streamTo('sigAI',text);
-  }).then(function(){
-    lbar.classList.remove('on');
-    toast('Signals ready','ok');
-  }).catch(function(e){
-    lbar.classList.remove('on');
-    toast(e.message,'err');
-  });
+  }).then(function(){ lbar.classList.remove('on'); toast('Signals ready','ok'); })
+  .catch(function(e){ lbar.classList.remove('on'); toast(e.message,'err'); });
 }
 
-// SCANNER tab
+// SCANNER — FIXED: /api/v5/wallet/token/token-detail (was v6)
 function runScanner(){
   var addr=document.getElementById('scanAddr').value.trim();
   if(!addr||addr.length<10){toast('Enter a valid token address','err');return;}
@@ -673,7 +547,7 @@ function runScanner(){
   toast('Scanning token','info');
 
   var tokenInfo={};
-  api('/api/V5/dex/market/price',{chainId:CID,tokenContractAddress:addr})
+  api('/api/v6/dex/market/price-info',{chainId:CID,tokenContractAddress:addr})
     .then(function(d){
       if(d&&d.data&&d.data[0]) tokenInfo.price=d.data[0].price;
       return api('/api/v5/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr});
@@ -700,40 +574,29 @@ function runScanner(){
       var html='<div class="res-card">'
         +'<div class="score-ring '+ringClass+'" style="border-color:'+scoreColor+'">'
         +'<div class="score-num" style="color:'+scoreColor+'">'+score+'</div>'
-        +'<div class="score-lbl">RISK</div>'
-        +'</div>'
+        +'<div class="score-lbl">RISK</div></div>'
         +'<div style="text-align:center;margin-bottom:12px"><span class="badge b-'+(verdict==='SAFE'?'buy':verdict==='DANGER'?'sell':'hold')+'">'+verdict+'</span></div>';
       if(tokenInfo.name){
         html+='<div class="res-row"><span class="res-key">Token</span><span class="res-val">'+tokenInfo.name+' ('+tokenInfo.symbol+')</span></div>';
         html+='<div class="res-row"><span class="res-key">Price</span><span class="res-val">$'+(tokenInfo.price||'0')+'</span></div>';
       }
-      html+='<div class="res-row"><span class="res-key">Address</span><span class="res-val">'+addr.slice(0,8)+'...'+addr.slice(-6)+'</span></div>';
-      html+='</div>';
+      html+='<div class="res-row"><span class="res-key">Address</span><span class="res-val">'+addr.slice(0,8)+'...'+addr.slice(-6)+'</span></div></div>';
       html+='<div class="card"><div class="card-hdr"><div class="card-title">AI Analysis</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="scanAI"></div></div>';
       document.getElementById('scanResult').innerHTML=html;
       return streamTo('scanAI',text);
     })
-    .catch(function(e){
-      lbar.classList.remove('on');
-      toast(e.message,'err');
-    });
+    .catch(function(e){ lbar.classList.remove('on'); toast(e.message,'err'); });
 }
 
-// PORTFOLIO tab
 function loadPortfolio(){
   if(!walletAddr){toast('Connect wallet first','err');return;}
   var lbar=document.getElementById('portLbar');
   lbar.classList.add('on');
   document.getElementById('portWallet').style.display='block';
   document.getElementById('portAddr').textContent=walletAddr.slice(0,8)+'...'+walletAddr.slice(-6);
-  var addrs=TOKENS.map(function(t){return t.addr;}).join(',');
-  api('/api/v5/dex/balance/all-token-balances-by-address',{
-    address:walletAddr,
-    chains:CID
-  }).then(function(d){
+  api('/api/v5/dex/balance/all-token-balances-by-address',{address:walletAddr,chains:CID}).then(function(d){
     var holdings=[];
-    // v6 returns flat array of token objects
-    if(d&&d.data) {
+    if(d&&d.data){
       var flat=Array.isArray(d.data)?d.data:(d.data[0]&&d.data[0].tokenAssets?d.data[0].tokenAssets:[]);
       holdings=flat.filter(function(a){return parseFloat(a.balance||a.tokenBalance||0)>0;});
     }
@@ -741,8 +604,7 @@ function loadPortfolio(){
     if(holdings.length===0){
       document.getElementById('portHoldings').innerHTML='<div class="empty">No X Layer tokens found in this wallet</div>';
       document.getElementById('portBal').textContent='$0.00 total';
-      lbar.classList.remove('on');
-      return;
+      lbar.classList.remove('on'); return;
     }
     var html=holdings.map(function(h){
       var bal=parseFloat(h.balance||h.tokenBalance||0);
@@ -751,28 +613,18 @@ function loadPortfolio(){
       var sym=h.symbol||h.tokenSymbol||'???';
       var pct=parseFloat(h.priceChange24h||h.change24h||0);
       var cc=pct>0?'up':pct<0?'dn':'neu';
-      return '<div class="port-item">'
-        +'<div class="port-left"><div class="tok-icon">'+sym.slice(0,3)+'</div><div><div class="tok-sym">'+sym+'</div><div class="tok-nm">'+bal.toFixed(4)+' tokens</div></div></div>'
-        +'<div class="port-right"><div class="port-val">$'+usd.toFixed(2)+'</div><div class="port-sub '+cc+'">'+(pct>0?'+':'')+pct.toFixed(2)+'%</div></div>'
-        +'</div>';
+      return '<div class="port-item"><div class="port-left"><div class="tok-icon">'+sym.slice(0,3)+'</div><div><div class="tok-sym">'+sym+'</div><div class="tok-nm">'+bal.toFixed(4)+' tokens</div></div></div>'
+        +'<div class="port-right"><div class="port-val">$'+usd.toFixed(2)+'</div><div class="port-sub '+cc+'">'+(pct>0?'+':'')+pct.toFixed(2)+'%</div></div></div>';
     }).join('');
     document.getElementById('portHoldings').innerHTML=html;
     document.getElementById('portBal').textContent='$'+totalUSD.toFixed(2)+' total value';
-
     var portSummary=holdings.map(function(h){return (h.symbol||h.tokenSymbol||'?')+': $'+parseFloat(h.balanceUsd||h.tokenBalanceUsd||h.usdValue||0).toFixed(2);}).join(', ');
     var prompt='You are a DeFi portfolio advisor. Analyze this X Layer wallet portfolio:\n\n'+portSummary+'\n\nProvide:\n1. PORTFOLIO HEALTH: Brief assessment\n2. TOP RISK: Biggest concern\n3. OPPORTUNITY: Best action to take now\n4. REBALANCE: Suggested allocation changes\n5. VERDICT: One sentence overall recommendation\n\nBe specific, actionable, professional. No emojis. No markdown.';
     document.getElementById('portAICard').style.display='block';
-    return claudeCustom(prompt).then(function(text){
-      lbar.classList.remove('on');
-      return streamTo('portAI',text);
-    });
-  }).catch(function(e){
-    lbar.classList.remove('on');
-    toast(e.message,'err');
-  });
+    return claudeCustom(prompt).then(function(text){ lbar.classList.remove('on'); return streamTo('portAI',text); });
+  }).catch(function(e){ lbar.classList.remove('on'); toast(e.message,'err'); });
 }
 
-// LENS tab
 function runLens(){
   var hash=document.getElementById('lensHash').value.trim();
   if(!hash||hash.length<10){toast('Enter a valid tx hash','err');return;}
@@ -780,24 +632,14 @@ function runLens(){
   lbar.classList.add('on');
   document.getElementById('lensResult').innerHTML='';
   toast('Fetching transaction','info');
-
-  // Correct params: txHash (capital H) + chainIndex
-  api('/api/v5/wallet/post-transaction/transaction-detail-by-txhash',{
-    chainIndex:CID,
-    txHash:hash,
-    iType:'0'
-  }).then(function(d){
+  api('/api/v5/wallet/post-transaction/transaction-detail-by-txhash',{chainIndex:CID,txHash:hash,iType:'0'}).then(function(d){
     var tx=(d&&d.data&&d.data[0])?d.data[0]:null;
     lbar.classList.remove('on');
-
     if(!tx){
-      // API returned no data - still explain via Claude with just the hash
       var fallbackPrompt='You are a blockchain analyst. Analyze this X Layer (OKX Layer 2) transaction hash: '+hash+'\n\nI could not fetch the full transaction details from the API. Based on the hash alone:\n1. HASH INFO: What can you tell from the hash format\n2. HOW TO VERIFY: Exact steps to look this up on X Layer explorer at https://www.okx.com/explorer/xlayer\n3. WHAT TO LOOK FOR: What fields the user should check when they find the transaction\n\nBe direct and helpful. No emojis.';
       document.getElementById('lensResult').innerHTML='<div class="card"><div class="card-hdr"><div class="card-title">AI Explanation</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="lensAI"></div></div>';
       return claudeCustom(fallbackPrompt).then(function(text){ return streamTo('lensAI',text); });
     }
-
-    // Build transaction summary from real data
     var from='Unknown', to='Unknown', amount='0', symbol='OKB', status='Unknown', time='Unknown';
     if(tx.fromDetails&&tx.fromDetails.length>0) from=tx.fromDetails[0].address||'Unknown';
     if(tx.toDetails&&tx.toDetails.length>0) to=tx.toDetails[0].address||'Unknown';
@@ -805,21 +647,13 @@ function runLens(){
     if(tx.symbol) symbol=tx.symbol;
     if(tx.txStatus) status=tx.txStatus;
     if(tx.txTime) time=new Date(parseInt(tx.txTime)).toUTCString();
-
-    // Include internal transfers if any
     var internals='';
     if(tx.internalTransactionDetails&&tx.internalTransactionDetails.length>0){
-      internals='\nInternal transfers:\n'+tx.internalTransactionDetails.map(function(t){
-        return '- '+t.amount+' from '+t.from+' to '+t.to;
-      }).join('\n');
+      internals='\nInternal transfers:\n'+tx.internalTransactionDetails.map(function(t){return '- '+t.amount+' from '+t.from+' to '+t.to;}).join('\n');
     }
-
-    var prompt='You are a blockchain analyst explaining X Layer transactions in plain English to a non-technical user.\n\nTransaction data:\nHash: '+hash+'\nFrom: '+from+'\nTo: '+to+'\nAmount: '+amount+' '+symbol+'\nStatus: '+status+'\nTime: '+time+internals+'\n\nExplain:\n1. WHAT HAPPENED: One clear sentence describing what occurred\n2. TYPE: What kind of transaction is this (simple transfer, token swap, DeFi interaction, contract call, etc)\n3. PARTIES: Describe sender and receiver addresses briefly\n4. VALUE: How much was transferred\n5. VERDICT: Was this transaction successful? Any notable details?\n\nWrite for a beginner. Clear language. No jargon. No emojis.';
-
+    var prompt='You are a blockchain analyst explaining X Layer transactions in plain English to a non-technical user.\n\nTransaction data:\nHash: '+hash+'\nFrom: '+from+'\nTo: '+to+'\nAmount: '+amount+' '+symbol+'\nStatus: '+status+'\nTime: '+time+internals+'\n\nExplain:\n1. WHAT HAPPENED: One clear sentence describing what occurred\n2. TYPE: What kind of transaction is this\n3. PARTIES: Describe sender and receiver briefly\n4. VALUE: How much was transferred\n5. VERDICT: Was this successful? Any notable details?\n\nWrite for a beginner. Clear language. No jargon. No emojis.';
     var statusClass=status==='success'?'up':'dn';
-    var html='<div class="card">'
-      +'<div class="card-hdr"><div class="card-title">Transaction Details</div></div>'
-      +'<div style="padding:0 14px">'
+    var html='<div class="card"><div class="card-hdr"><div class="card-title">Transaction Details</div></div><div style="padding:0 14px">'
       +'<div class="res-row"><span class="res-key">Hash</span><span class="res-val">'+hash.slice(0,10)+'...'+hash.slice(-8)+'</span></div>'
       +'<div class="res-row"><span class="res-key">From</span><span class="res-val">'+from.slice(0,8)+'...'+from.slice(-6)+'</span></div>'
       +'<div class="res-row"><span class="res-key">To</span><span class="res-val">'+to.slice(0,8)+'...'+to.slice(-6)+'</span></div>'
@@ -830,13 +664,9 @@ function runLens(){
     html+='<div class="card"><div class="card-hdr"><div class="card-title">AI Explanation</div><div class="card-tag">CLAUDE</div></div><div class="ai-box" id="lensAI"></div></div>';
     document.getElementById('lensResult').innerHTML=html;
     return claudeCustom(prompt).then(function(text){ return streamTo('lensAI',text); });
-  }).catch(function(e){
-    lbar.classList.remove('on');
-    toast(e.message,'err');
-  });
+  }).catch(function(e){ lbar.classList.remove('on'); toast(e.message,'err'); });
 }
 
-// SWAP tab
 function selToken(sym){
   switchTab('swap');
   document.getElementById('fromTok').value=sym;
@@ -857,12 +687,7 @@ function getQuote(){
     TOKENS.forEach(function(t){if(t.sym===fs)from=t;if(t.sym===ts)to=t;});
     if(!from||!to) return;
     var amtWei=(parseFloat(amt)*Math.pow(10,from.dec)).toFixed(0);
-    api('/api/v6/dex/aggregator/quote',{
-      chainIndex:CID,
-      fromTokenAddress:from.addr,
-      toTokenAddress:to.addr,
-      amount:amtWei
-    }).then(function(d){
+    api('/api/v6/dex/aggregator/quote',{chainIndex:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,amount:amtWei}).then(function(d){
       if(d&&d.data&&d.data[0]){
         var q=d.data[0]; quoteData=q;
         var toAmt=(parseFloat(q.toTokenAmount)/Math.pow(10,to.dec)).toFixed(6);
@@ -876,8 +701,7 @@ function getQuote(){
         if(walletAddr) loadSwapBalance();
       } else {
         var msg=(d&&d.msg)?d.msg:'No liquidity for this pair';
-        var code=(d&&d.code)?d.code:'';
-        toast('Quote: '+msg+(code?' ('+code+')':''),'err');
+        toast('Quote: '+msg,'err');
         document.getElementById('toAmt').value='';
       }
     }).catch(function(e){toast('Quote failed: '+e.message,'err');});
@@ -886,13 +710,9 @@ function getQuote(){
 
 function loadSwapBalance(){
   if(!walletAddr) return;
-  var fs=document.getElementById('fromTok').value;
-  var tok=null; TOKENS.forEach(function(t){if(t.sym===fs)tok=t;});
-  if(!tok) return;
-  api('/api/v5/dex/balance/all-token-balances-by-address',{
-    address:walletAddr,chains:CID
-  }).then(function(d){
+  api('/api/v5/dex/balance/all-token-balances-by-address',{address:walletAddr,chains:CID}).then(function(d){
     if(d&&d.data&&d.data[0]&&d.data[0].tokenAssets&&d.data[0].tokenAssets.length>0){
+      var fs=document.getElementById('fromTok').value;
       var bal=parseFloat(d.data[0].tokenAssets[0].balance).toFixed(4);
       document.getElementById('swapBal').textContent='Balance: '+bal+' '+fs;
     }
@@ -911,17 +731,11 @@ function doSwap(){
   var amtWei=(parseFloat(amt)*Math.pow(10,from.dec)).toFixed(0);
   var btn=document.getElementById('swapBtn');
   btn.disabled=true; btn.textContent='BUILDING TX...';
-  api('/api/v6/dex/aggregator/swap',{
-    chainIndex:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,
-    amount:amtWei,userWalletAddress:walletAddr,slippagePercent:'0.5'
-  }).then(function(d){
+  api('/api/v6/dex/aggregator/swap',{chainIndex:CID,fromTokenAddress:from.addr,toTokenAddress:to.addr,amount:amtWei,userWalletAddress:walletAddr,slippagePercent:'0.5'}).then(function(d){
     if(!d||!d.data||!d.data[0]||!d.data[0].tx) throw new Error('No tx data');
     var tx=d.data[0].tx;
     btn.textContent='CONFIRM IN WALLET';
-    return walletProv.request({
-      method:'eth_sendTransaction',
-      params:[{from:walletAddr,to:tx.to,data:tx.data,value:tx.value||'0x0',gas:tx.gas?'0x'+parseInt(tx.gas).toString(16):undefined}]
-    });
+    return walletProv.request({method:'eth_sendTransaction',params:[{from:walletAddr,to:tx.to,data:tx.data,value:tx.value||'0x0',gas:tx.gas?'0x'+parseInt(tx.gas).toString(16):undefined}]});
   }).then(function(txHash){
     toast('Swap sent: '+txHash.slice(0,10)+'...','ok');
     btn.textContent='EXECUTE SWAP'; btn.disabled=false;
@@ -930,13 +744,9 @@ function doSwap(){
     document.getElementById('toAmt').value='';
     document.getElementById('swapInfo').style.display='none';
     setTimeout(loadSwapBalance,3000);
-  }).catch(function(e){
-    toast(e.message||'Swap failed','err');
-    btn.textContent='EXECUTE SWAP'; btn.disabled=false;
-  });
+  }).catch(function(e){ toast(e.message||'Swap failed','err'); btn.textContent='EXECUTE SWAP'; btn.disabled=false; });
 }
 
-// Toast
 function toast(msg,type){
   var el=document.getElementById('toast');
   el.textContent=msg;
@@ -945,18 +755,13 @@ function toast(msg,type){
   el._t=setTimeout(function(){el.classList.remove('show');},3000);
 }
 
-// Init
 window.addEventListener('load',function(){
-  // Populate swap token selects from TOKENS array
   var fromSel=document.getElementById('fromTok');
   var toSel=document.getElementById('toTok');
   TOKENS.forEach(function(t,i){
-    var o1=document.createElement('option');
-    o1.value=t.sym; o1.textContent=t.sym;
-    fromSel.appendChild(o1);
-    var o2=document.createElement('option');
-    o2.value=t.sym; o2.textContent=t.sym;
-    if(i===1) o2.selected=true; // default To = USDC
+    var o1=document.createElement('option'); o1.value=t.sym; o1.textContent=t.sym; fromSel.appendChild(o1);
+    var o2=document.createElement('option'); o2.value=t.sym; o2.textContent=t.sym;
+    if(i===1) o2.selected=true;
     toSel.appendChild(o2);
   });
   initWallet();
