@@ -554,8 +554,8 @@ function runScanner(){
     })
     .then(function(d){
       if(d&&d.data&&d.data[0]){
-        tokenInfo.name=d.data[0].tokenName||'Unknown';
-        tokenInfo.symbol=d.data[0].tokenSymbol||'Unknown';
+        tokenInfo.name=d.data[0].name||d.data[0].tokenName||'Unknown';
+        tokenInfo.symbol=d.data[0].symbol||d.data[0].tokenSymbol||'Unknown';
         tokenInfo.decimals=d.data[0].decimals||18;
         tokenInfo.totalSupply=d.data[0].totalSupply||'Unknown';
       }
