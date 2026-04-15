@@ -673,10 +673,10 @@ function runScanner(){
   toast('Scanning token','info');
 
   var tokenInfo={};
-  api('/api/v6/dex/market/price',{chainId:CID,tokenContractAddress:addr})
+  api('/api/V5/dex/market/price',{chainId:CID,tokenContractAddress:addr})
     .then(function(d){
       if(d&&d.data&&d.data[0]) tokenInfo.price=d.data[0].price;
-      return api('/api/v6/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr});
+      return api('/api/v5/wallet/token/token-detail',{chainIndex:CID,tokenAddress:addr});
     })
     .then(function(d){
       if(d&&d.data&&d.data[0]){
